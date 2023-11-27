@@ -126,10 +126,10 @@ def init_users_table():
     connection.cursor().execute('''
         CREATE TABLE IF NOT EXISTS Users (
         id INTEGER PRIMARY KEY
-        telegram_id BIGINT
-        first_name VARCHAR(255) DEFAULT NULL
-        last_name VARCHAR(255) DEFAULT NULL
-        username VARCHAR(255) DEFAULT NULL
+        telegram_id INTEGER
+        first_name TEXT DEFAULT NULL
+        last_name TEXT DEFAULT NULL
+        username TEXT DEFAULT NULL
         ''')
     connection.commit()
 
