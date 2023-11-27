@@ -131,7 +131,8 @@ def init_users_table():
             telegram_id INTEGER UNIQUE,
             first_name TEXT DEFAULT NULL,
             last_name TEXT DEFAULT NULL,
-            username TEXT DEFAULT NULL)
+            username TEXT DEFAULT NULL
+            is_admin INTEGER DEFAULT 0)
             ''')
         connection.commit()
 
@@ -166,7 +167,8 @@ def init_reports_table():
             message TEXT NOT NULL,
             address TEXT NOT NULL,
             media TEXT DEFAULT NULL,
-            FOREIGN KEY(user_id) REFERENCES Users(id) ON DELETE CASCADE
+            FOREIGN KEY(user_id) REFERENCES Users(id) ON DELETE CASCADE,
+            is_draft INTEGER DEFAULT 1
             ''')
         connection.commit()
 
@@ -177,4 +179,12 @@ def set_new_report(user_id, message, address, media=None):
         values = (user_id, message, address, media)
         cursor = connection.cursor()
         cursor.execute(query, values)
+        connection.commit()
+
+
+def make_active(report_id):
+    with sqlite3.connect('urbanburo_database.db') as connection:
+        query = 'UPDATE Reports SET is_draft = 0 WHERE id = ?'
+        cursor = connection.cursor()
+        cursor.execute(query, (report_id))
         connection.commit()
