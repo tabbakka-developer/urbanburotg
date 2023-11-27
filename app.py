@@ -82,6 +82,7 @@ def send_message(user_id, message):
 
 def store_user_if_needed(tg_user):
     users = get_user_by_telegram_id(telegram_id=tg_user['id'])
+    print(users)
     if len(users) < 1:
         set_user(
             telegram_id=tg_user['id'],
