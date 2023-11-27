@@ -10,7 +10,11 @@ app = Flask(__name__)
 
 token = "6892121869:AAEeEV8i4L1cQ5aF6KazqFjIDKDIZSUm4mg"
 link = "https://api.telegram.org/bot" + token
-
+commandsList = [
+    '/start',
+    '/help',
+    '/report'
+]
 
 @app.route("/")
 def home():
@@ -47,11 +51,8 @@ def tg_init():
     json_data = request.get_json()
     message = json_data['message']
     user = message['from']
-
-    print(message)
-    print(user)
-
-    send_message(user['id'], 'Hello dear')
+    # for future
+    chat = message['chat']
     return {
         "status": "ok"
     }
@@ -68,3 +69,27 @@ def send_message(user_id, message):
         json=data
     )
     return response.json()
+
+
+def parse_command(command, user_id):
+    if command in commandsList:
+        if command == '/start':
+            return command_start(user_id)
+        elif command == '/help':
+            return command_help(user_id)
+        elif command == '/report':
+            return command_report(user_id)
+    else:
+        return send_message(user_id, "Незнайома для мене команда. Вибач, я гарний але не ідеальний :(")
+
+
+def command_start(user_id):
+    return send_message(user_id, "Тут щось буде коли Давід скажи що тут має бути, адже зараз це просто текст")
+
+
+def command_help(user_id):
+    return send_message(user_id, "Я вмію вітатись, та намагаюсь допомогти вам зробити наше місто кращим. Додаткова інформація тут зʼявіться пізниіше")
+
+
+def command_report(user_id):
+    return send_message(user_id, "Намагаюсь додати ваш репорт до нашої бази репортів")
