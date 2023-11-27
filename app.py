@@ -15,7 +15,6 @@ commandsList = [
     '/help',
     '/report'
 ]
-connection = sqlite3.connect('urbanburo_database.db')
 
 
 @app.route("/")
@@ -61,7 +60,6 @@ def tg_init():
     # for future
     chat = message['chat']
     parse_command(text, user['id'])
-    connection.close()
     return {
         "status": "ok"
     }
@@ -124,27 +122,31 @@ def command_report(user_id):
 # DATABASE
 #
 def init_users_table():
-    connection.cursor().execute('''
-        CREATE TABLE IF NOT EXISTS Users (
-        id INTEGER PRIMARY KEY,
-        telegram_id INTEGER,
-        first_name TEXT DEFAULT NULL,
-        last_name TEXT DEFAULT NULL,
-        username TEXT DEFAULT NULL)
-        ''')
-    connection.commit()
+    with sqlite3.connect('your_database.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Users (
+            id INTEGER PRIMARY KEY,
+            telegram_id INTEGER UNIQUE,
+            first_name TEXT DEFAULT NULL,
+            last_name TEXT DEFAULT NULL,
+            username TEXT DEFAULT NULL)
+            ''')
+        connection.commit()
 
 
 def set_user(telegram_id, first_name=None, last_name=None, username=None):
-    query = 'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)'
-    values = (telegram_id, first_name, last_name, username)
-    cursor = connection.cursor()
-    cursor.execute(query, values)
-    connection.commit()
+    with sqlite3.connect('your_database.db') as connection:
+        query = 'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)'
+        values = (telegram_id, first_name, last_name, username)
+        cursor = connection.cursor()
+        cursor.execute(query, values)
+        connection.commit()
 
 
 def get_user_by_telegram_id(telegram_id):
-    query = 'SELECT * FROM Users WHERE telegram_id = ?'
-    cursor = connection.cursor()
-    cursor.execute(query, (telegram_id,))
-    return cursor.fetchall()
+    with sqlite3.connect('your_database.db') as connection:
+        query = 'SELECT * FROM Users WHERE telegram_id = ?'
+        cursor = connection.cursor()
+        cursor.execute(query, (telegram_id,))
+        return cursor.fetchall()
