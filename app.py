@@ -3,6 +3,7 @@ import json
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import make_response
 import requests
 
 app = Flask(__name__)
@@ -44,10 +45,16 @@ def get_me():
 @app.route("/api/tg-webhook", methods=['POST'])
 def tg_init():
     print(request.json)
-    # message = request.form['message']
-    # user = message['from']
+    message = request.form['message']
+    user = message['from']
+
+    print(message)
+    print(user)
+
     # send_message(user['id'], 'Hello dear')
-    return None
+    return {
+        "status": "ok"
+    }
 
 
 def send_message(user_id, message):
@@ -61,4 +68,3 @@ def send_message(user_id, message):
         json=data
     )
     return response.json()
-
