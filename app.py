@@ -43,7 +43,6 @@ def get_me():
 
 @app.route("/api/tg-webhook", methods=['POST'])
 def tg_init():
-    error = None
     if request.method == 'POST':
         form = request.form
         file = open('file.json', 'w+')
@@ -52,7 +51,7 @@ def tg_init():
                 form
             )
         )
+        file.close()
         return None
-    error = 'Non POST request'
-    return error
+    return None
 
