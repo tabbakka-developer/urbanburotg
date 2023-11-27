@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -43,6 +45,14 @@ def get_me():
 def tg_init():
     error = None
     if request.method == 'POST':
-        return request.form
+        form = request.form
+        file = open('file.json', 'w+')
+        file.write(
+            json.dumps(
+                form
+            )
+        )
+        return None
     error = 'Non POST request'
     return error
+
