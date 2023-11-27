@@ -53,13 +53,18 @@ def tg_init():
     init_users_table()
 
     json_data = request.get_json()
-    message = json_data['message']
-    text = message['text']
-    user = message['from']
-    store_user_if_needed(user)
-    # for future
-    chat = message['chat']
-    parse_command(text, user['id'])
+    if 'message' in json_data:
+        message = json_data['message']
+        text = message['text']
+        user = message['from']
+        store_user_if_needed(user)
+        # for future
+        chat = message['chat']
+        parse_command(text, user['id'])
+    else:
+        print('can not parse data: ')
+        print(json_data)
+        print('bye')
     return {
         "status": "ok"
     }
@@ -73,6 +78,8 @@ def send_message(user_id, message, keyboard=None):
 
     if keyboard is not None:
         data["reply_markup"] = keyboard
+
+    print(data)
 
     response = requests.post(
         url=link + "/sendMessage",
