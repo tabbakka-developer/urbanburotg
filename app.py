@@ -136,14 +136,16 @@ def init_users_table():
 
 
 def set_user(telegram_id, first_name=None, last_name=None, username=None):
-    connection.cursor().execute(
-        'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)',
-        (telegram_id, first_name, last_name, username)
-    )
-    connection.commit()
+    query = 'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)'
+    values = (telegram_id, first_name, last_name, username)
 
+    with connection.cursor() as cursor:
+        cursor.execute(query, values)
+
+    connection.commit()
 
 def get_user_by_telegram_id(telegram_id):
     query = 'SELECT * FROM Users WHERE telegram_id = ?'
-    connection.cursor().execute(query, (telegram_id,))
-    return connection.cursor().fetchall()
+    cursor = connection.cursor()
+    cursor.execute(query, (telegram_id,))
+    return cursor.fetchall()
