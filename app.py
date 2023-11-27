@@ -65,11 +65,14 @@ def tg_init():
     }
 
 
-def send_message(user_id, message):
+def send_message(user_id, message, keyboard=None):
     data = {
         "chat_id": user_id,
         "text": message
     }
+
+    if keyboard is not None:
+        data.reply_markup = keyboard
 
     response = requests.post(
         url=link + "/sendMessage",
@@ -106,7 +109,11 @@ def parse_command(command, user_id):
 
 
 def command_start(user_id):
-    return send_message(user_id, "Тут щось буде коли Давід скажи що тут має бути, адже зараз це просто текст")
+    return send_message(
+        user_id,
+        "Тут щось буде коли Давід скажи що тут має бути, адже зараз це просто текст",
+        create_keyboard()
+    )
 
 
 def command_help(user_id):
@@ -116,6 +123,32 @@ def command_help(user_id):
 
 def command_report(user_id):
     return send_message(user_id, "Намагаюсь додати ваш репорт до нашої бази репортів")
+
+
+def create_keyboard():
+    return {
+        'keyboard': [
+            [
+                {
+                    'text': 'Відправити проблему',
+                    'request_contact': 1,
+                    'request_location': 1
+                },
+                {
+                    'text': 'Соціальні мережі',
+                },
+            ],
+            [
+                {
+                    'text': 'Правила поведінки'
+                },
+                {
+                    'text': 'Мої скарги'
+                }
+            ]
+        ],
+        'is_persistent': 1
+    }
 
 
 #
