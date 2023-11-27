@@ -53,18 +53,32 @@ def tg_init():
     init_users_table()
 
     json_data = request.get_json()
-    if "message" in json_data:
-        message = json_data["message"]
-        text = message["text"]
-        user = message["from"]
-        store_user_if_needed(user)
-        # for future
-        chat = message["chat"]
-        parse_command(text, user["id"])
-    else:
-        print("can not parse data: ")
-        print(json_data)
-        print("bye")
+    if "message" not in json_data:
+        return not_valid_error(json_data)
+
+    message = json_data["message"]
+
+    if "user" not in message:
+        return not_valid_error(message)
+
+    if "text" not in message:
+        return not_valid_error(message)
+
+    text = message["text"]
+    user = message["from"]
+    store_user_if_needed(user)
+    # for future
+    # chat = message["chat"]
+    parse_command(text, user["id"])
+    return {
+        "status": "ok"
+    }
+
+
+def not_valid_error(object):
+    print("can not parse data: ")
+    print(object)
+    print("bye")
     return {
         "status": "ok"
     }
