@@ -1,11 +1,13 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 import requests
 
 app = Flask(__name__)
 
-token = "6945010116:AAFNH2do-0VR_WPFoG6HgEzMC_pnWd2FOR0"
+token = "6892121869:AAEeEV8i4L1cQ5aF6KazqFjIDKDIZSUm4mg"
 link = "https://api.telegram.org/bot" + token
+
 
 @app.route("/")
 def home():
@@ -29,7 +31,18 @@ def set_webhook():
     return response.json()
 
 
+@app.route("/api/qzwxecff66613/getMe")
+def get_me():
+    response = requests.post(
+        url=link + "/getMe"
+    )
+    return response.json()
+
 
 @app.route("/api/tg-webhook", methods=['POST'])
 def tg_init():
-    return
+    error = None
+    if request.method == 'POST':
+        return request.form
+    error = 'Non POST request'
+    return error
