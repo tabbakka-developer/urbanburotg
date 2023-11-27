@@ -11,9 +11,9 @@ app = Flask(__name__)
 token = "6892121869:AAEeEV8i4L1cQ5aF6KazqFjIDKDIZSUm4mg"
 link = "https://api.telegram.org/bot" + token
 commandsList = [
-    '/start',
-    '/help',
-    '/report'
+    "/start",
+    "/help",
+    "/report"
 ]
 
 
@@ -22,12 +22,12 @@ def home():
     return "hello world"
 
 
-@app.route("/admin", methods=['GET'])
+@app.route("/admin", methods=["GET"])
 def admin_main():
-    return render_template('/admin/index.html')
+    return render_template("/admin/index.html")
 
 
-@app.route("/api/qzwxecff123/set-hook", methods=['GET'])
+@app.route("/api/qzwxecff123/set-hook", methods=["GET"])
 def set_webhook():
     data = {
         "url": "https://vp-developer.pp.ua/api/tg-webhook"
@@ -47,24 +47,24 @@ def get_me():
     return response.json()
 
 
-@app.route("/api/tg-webhook", methods=['POST'])
+@app.route("/api/tg-webhook", methods=["POST"])
 def tg_init():
     # database
     init_users_table()
 
     json_data = request.get_json()
-    if 'message' in json_data:
-        message = json_data['message']
-        text = message['text']
-        user = message['from']
+    if "message" in json_data:
+        message = json_data["message"]
+        text = message["text"]
+        user = message["from"]
         store_user_if_needed(user)
         # for future
-        chat = message['chat']
-        parse_command(text, user['id'])
+        chat = message["chat"]
+        parse_command(text, user["id"])
     else:
-        print('can not parse data: ')
+        print("can not parse data: ")
         print(json_data)
-        print('bye')
+        print("bye")
     return {
         "status": "ok"
     }
@@ -89,27 +89,27 @@ def send_message(user_id, message, keyboard=None):
 
 
 def store_user_if_needed(tg_user):
-    users = get_user_by_telegram_id(telegram_id=tg_user['id'])
+    users = get_user_by_telegram_id(telegram_id=tg_user["id"])
     print(users)
     if len(users) < 1:
         set_user(
-            telegram_id=tg_user['id'],
-            first_name=tg_user['first_name'],
-            last_name=tg_user['last_name'],
-            username=tg_user['username']
+            telegram_id=tg_user["id"],
+            first_name=tg_user["first_name"],
+            last_name=tg_user["last_name"],
+            username=tg_user["username"]
         )
-        users = get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+        users = get_user_by_telegram_id(telegram_id=tg_user["id"])[0]
     return users[0]
 
 
 def parse_command(command, user_id):
     print(command)
     if command in commandsList:
-        if command == '/start':
+        if command == "/start":
             return command_start(user_id)
-        elif command == '/help':
+        elif command == "/help":
             return command_help(user_id)
-        elif command == '/report':
+        elif command == "/report":
             return command_report(user_id)
     else:
         return send_message(user_id, "Незнайома для мене команда. Вибач, я гарний але не ідеальний :(")
@@ -134,27 +134,27 @@ def command_report(user_id):
 
 def create_keyboard():
     return {
-        'keyboard': [
+        "keyboard": [
             [
                 {
-                    'text': 'Відправити проблему',
-                    'request_contact': 1,
-                    'request_location': 1
+                    "text": "Відправити проблему",
+                    "request_contact": True,
+                    "request_location": True
                 },
                 {
-                    'text': 'Соціальні мережі',
+                    "text": "Соціальні мережі",
                 },
             ],
             [
                 {
-                    'text': 'Правила поведінки'
+                    "text": "Правила поведінки"
                 },
                 {
-                    'text': 'Мої скарги'
+                    "text": "Мої скарги"
                 }
             ]
         ],
-        'is_persistent': 1
+        "is_persistent": True
     }
 
 
@@ -163,7 +163,7 @@ def create_keyboard():
 #       Users table
 #
 def init_users_table():
-    with sqlite3.connect('urbanburo_database.db') as connection:
+    with sqlite3.connect("urbanburo_database.db") as connection:
         cursor = connection.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS Users (
@@ -178,8 +178,8 @@ def init_users_table():
 
 
 def set_user(telegram_id, first_name=None, last_name=None, username=None):
-    with sqlite3.connect('urbanburo_database.db') as connection:
-        query = 'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)'
+    with sqlite3.connect("urbanburo_database.db") as connection:
+        query = "INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)"
         values = (telegram_id, first_name, last_name, username)
         cursor = connection.cursor()
         cursor.execute(query, values)
@@ -187,8 +187,8 @@ def set_user(telegram_id, first_name=None, last_name=None, username=None):
 
 
 def get_user_by_telegram_id(telegram_id):
-    with sqlite3.connect('urbanburo_database.db') as connection:
-        query = 'SELECT * FROM Users WHERE telegram_id = ?'
+    with sqlite3.connect("urbanburo_database.db") as connection:
+        query = "SELECT * FROM Users WHERE telegram_id = ?"
         cursor = connection.cursor()
         cursor.execute(query, (telegram_id,))
         return cursor.fetchall()
@@ -198,7 +198,7 @@ def get_user_by_telegram_id(telegram_id):
 #       Reports table
 #
 def init_reports_table():
-    with sqlite3.connect('urbanburo_database.db') as connection:
+    with sqlite3.connect("urbanburo_database.db") as connection:
         cursor = connection.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS Reports (
@@ -214,8 +214,8 @@ def init_reports_table():
 
 
 def set_new_report(user_id, message, address, media=None):
-    with sqlite3.connect('urbanburo_database.db') as connection:
-        query = 'INSERT INTO Reports (user_id, message, address, media) VALUES (?, ?, ?, ?)'
+    with sqlite3.connect("urbanburo_database.db") as connection:
+        query = "INSERT INTO Reports (user_id, message, address, media) VALUES (?, ?, ?, ?)"
         values = (user_id, message, address, media)
         cursor = connection.cursor()
         cursor.execute(query, values)
@@ -223,8 +223,8 @@ def set_new_report(user_id, message, address, media=None):
 
 
 def make_active(report_id):
-    with sqlite3.connect('urbanburo_database.db') as connection:
-        query = 'UPDATE Reports SET is_draft = 0 WHERE id = ?'
+    with sqlite3.connect("urbanburo_database.db") as connection:
+        query = "UPDATE Reports SET is_draft = 0 WHERE id = ?"
         cursor = connection.cursor()
         cursor.execute(query, (report_id,))
         connection.commit()
