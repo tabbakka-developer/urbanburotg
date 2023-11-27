@@ -3,8 +3,9 @@ import json
 from flask import Flask
 from flask import render_template
 from flask import request
-from flask import make_response
 import requests
+import sqlite3
+from db import DB
 
 app = Flask(__name__)
 
@@ -15,6 +16,7 @@ commandsList = [
     '/help',
     '/report'
 ]
+
 
 @app.route("/")
 def home():
@@ -52,6 +54,7 @@ def tg_init():
     message = json_data['message']
     text = message['text']
     user = message['from']
+    store_user_if_needed(user)
     # for future
     chat = message['chat']
     parse_command(text, user['id'])
@@ -73,6 +76,19 @@ def send_message(user_id, message):
     return response.json()
 
 
+def store_user_if_needed(tg_user):
+    user = DB.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+    if user is None:
+        DB.set_user(
+            telegram_id=tg_user['id'],
+            first_name=tg_user['first_name'],
+            last_name=tg_user['last_name'],
+            username=tg_user['username']
+        )
+        user = DB.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+    return user
+
+
 def parse_command(command, user_id):
     print(command)
     if command in commandsList:
@@ -91,7 +107,8 @@ def command_start(user_id):
 
 
 def command_help(user_id):
-    return send_message(user_id, "Я вмію вітатись, та намагаюсь допомогти вам зробити наше місто кращим. Додаткова інформація тут зʼявіться пізниіше")
+    return send_message(user_id,
+                        "Я вмію вітатись, та намагаюсь допомогти вам зробити наше місто кращим. Додаткова інформація тут зʼявіться пізниіше")
 
 
 def command_report(user_id):
