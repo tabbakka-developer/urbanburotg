@@ -5,7 +5,6 @@ from flask import render_template
 from flask import request
 import requests
 import sqlite3
-from db import DB
 
 app = Flask(__name__)
 
@@ -16,7 +15,7 @@ commandsList = [
     '/help',
     '/report'
 ]
-dbCon = DB()
+connection = sqlite3.connect('urbanburo_database.db')
 
 
 @app.route("/")
@@ -51,6 +50,9 @@ def get_me():
 
 @app.route("/api/tg-webhook", methods=['POST'])
 def tg_init():
+    # database
+    init_users_table()
+
     json_data = request.get_json()
     message = json_data['message']
     text = message['text']
@@ -59,6 +61,7 @@ def tg_init():
     # for future
     chat = message['chat']
     parse_command(text, user['id'])
+    connection.close()
     return {
         "status": "ok"
     }
@@ -78,15 +81,15 @@ def send_message(user_id, message):
 
 
 def store_user_if_needed(tg_user):
-    user = dbCon.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+    user = get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
     if user is None:
-        dbCon.set_user(
+        set_user(
             telegram_id=tg_user['id'],
             first_name=tg_user['first_name'],
             last_name=tg_user['last_name'],
             username=tg_user['username']
         )
-        user = dbCon.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+        user = get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
     return user
 
 
@@ -114,3 +117,31 @@ def command_help(user_id):
 
 def command_report(user_id):
     return send_message(user_id, "Намагаюсь додати ваш репорт до нашої бази репортів")
+
+
+#
+# DATABASE
+#
+def init_users_table():
+    connection.cursor().execute('''
+        CREATE IF NOT EXISTS Users (
+        id INTEGER PRIMARY KEY
+        telegram_id BIGINT
+        first_name VARCHAR(255) DEFAULT NULL
+        last_name VARCHAR(255) DEFAULT NULL
+        username VARCHAR(255) DEFAULT NULL
+        ''')
+    connection.commit()
+
+
+def set_user(telegram_id, first_name=None, last_name=None, username=None):
+    connection.cursor().execute(
+        'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)',
+        (telegram_id, first_name, last_name, username)
+    )
+    connection.commit()
+
+
+def get_user_by_telegram_id(telegram_id):
+    connection.cursor().execute('SELECT * FROM Users WHERE telegram_id = ?', (telegram_id))
+    return self.cursor.fetchall()
