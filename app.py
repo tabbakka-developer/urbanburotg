@@ -119,10 +119,11 @@ def command_report(user_id):
 
 
 #
-# DATABASE
+#       DATABASE
+#       Users table
 #
 def init_users_table():
-    with sqlite3.connect('your_database.db') as connection:
+    with sqlite3.connect('urbanburo_database.db') as connection:
         cursor = connection.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS Users (
@@ -136,7 +137,7 @@ def init_users_table():
 
 
 def set_user(telegram_id, first_name=None, last_name=None, username=None):
-    with sqlite3.connect('your_database.db') as connection:
+    with sqlite3.connect('urbanburo_database.db') as connection:
         query = 'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)'
         values = (telegram_id, first_name, last_name, username)
         cursor = connection.cursor()
@@ -145,8 +146,35 @@ def set_user(telegram_id, first_name=None, last_name=None, username=None):
 
 
 def get_user_by_telegram_id(telegram_id):
-    with sqlite3.connect('your_database.db') as connection:
+    with sqlite3.connect('urbanburo_database.db') as connection:
         query = 'SELECT * FROM Users WHERE telegram_id = ?'
         cursor = connection.cursor()
         cursor.execute(query, (telegram_id,))
         return cursor.fetchall()
+
+
+#
+#       Reports table
+#
+def init_reports_table():
+    with sqlite3.connect('urbanburo_database.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Reports (
+            id INTEGER PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            message TEXT NOT NULL,
+            address TEXT NOT NULL,
+            media TEXT DEFAULT NULL,
+            FOREIGN KEY(user_id) REFERENCES Users(id) ON DELETE CASCADE
+            ''')
+        connection.commit()
+
+
+def set_new_report(user_id, message, address, media=None):
+    with sqlite3.connect('urbanburo_database.db') as connection:
+        query = 'INSERT INTO Reports (user_id, message, address, media) VALUES (?, ?, ?, ?)'
+        values = (user_id, message, address, media)
+        cursor = connection.cursor()
+        cursor.execute(query, values)
+        connection.commit()
