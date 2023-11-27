@@ -124,7 +124,7 @@ def command_report(user_id):
 #
 def init_users_table():
     connection.cursor().execute('''
-        CREATE IF NOT EXISTS Users (
+        CREATE TABLE IF NOT EXISTS Users (
         id INTEGER PRIMARY KEY
         telegram_id BIGINT
         first_name VARCHAR(255) DEFAULT NULL
