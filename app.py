@@ -143,5 +143,6 @@ def set_user(telegram_id, first_name=None, last_name=None, username=None):
 
 
 def get_user_by_telegram_id(telegram_id):
+    print(telegram_id)
     connection.cursor().execute('SELECT * FROM Users WHERE telegram_id = ?', telegram_id)
     return connection.cursor().fetchall()
