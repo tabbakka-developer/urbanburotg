@@ -72,7 +72,7 @@ def send_message(user_id, message, keyboard=None):
     }
 
     if keyboard is not None:
-        data.reply_markup = keyboard
+        data["reply_markup"] = keyboard
 
     response = requests.post(
         url=link + "/sendMessage",
