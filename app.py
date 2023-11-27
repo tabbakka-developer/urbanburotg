@@ -58,7 +58,7 @@ def tg_init():
 
     message = json_data["message"]
 
-    if "user" not in message:
+    if "from" not in message:
         return not_valid_error(message)
 
     if "text" not in message:
@@ -69,7 +69,8 @@ def tg_init():
     store_user_if_needed(user)
     # for future
     # chat = message["chat"]
-    parse_command(text, user["id"])
+    message_response = parse_command(text, user["id"])
+    print(message_response)
     return {
         "status": "ok"
     }
