@@ -50,10 +50,11 @@ def get_me():
 def tg_init():
     json_data = request.get_json()
     message = json_data['message']
+    text = message['text']
     user = message['from']
     # for future
     chat = message['chat']
-    parse_command(message, user['id'])
+    parse_command(text, user['id'])
     return {
         "status": "ok"
     }
