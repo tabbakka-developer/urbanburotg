@@ -16,6 +16,7 @@ commandsList = [
     '/help',
     '/report'
 ]
+dbCon = DB()
 
 
 @app.route("/")
@@ -77,15 +78,15 @@ def send_message(user_id, message):
 
 
 def store_user_if_needed(tg_user):
-    user = DB.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+    user = dbCon.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
     if user is None:
-        DB.set_user(
+        dbCon.set_user(
             telegram_id=tg_user['id'],
             first_name=tg_user['first_name'],
             last_name=tg_user['last_name'],
             username=tg_user['username']
         )
-        user = DB.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+        user = dbCon.get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
     return user
 
 
