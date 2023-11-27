@@ -129,7 +129,7 @@ def init_users_table():
         telegram_id INTEGER,
         first_name TEXT DEFAULT NULL,
         last_name TEXT DEFAULT NULL,
-        username TEXT DEFAULT NULL
+        username TEXT DEFAULT NULL)
         ''')
     connection.commit()
 
