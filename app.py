@@ -186,5 +186,5 @@ def make_active(report_id):
     with sqlite3.connect('urbanburo_database.db') as connection:
         query = 'UPDATE Reports SET is_draft = 0 WHERE id = ?'
         cursor = connection.cursor()
-        cursor.execute(query, (report_id))
+        cursor.execute(query, (report_id,))
         connection.commit()
