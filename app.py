@@ -73,6 +73,7 @@ def send_message(user_id, message):
 
 
 def parse_command(command, user_id):
+    print(command)
     if command in commandsList:
         if command == '/start':
             return command_start(user_id)
