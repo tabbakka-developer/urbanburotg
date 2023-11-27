@@ -138,10 +138,8 @@ def init_users_table():
 def set_user(telegram_id, first_name=None, last_name=None, username=None):
     query = 'INSERT INTO Users (telegram_id, first_name, last_name, username) VALUES (?, ?, ?, ?)'
     values = (telegram_id, first_name, last_name, username)
-
-    with connection.cursor() as cursor:
-        cursor.execute(query, values)
-
+    cursor = connection.cursor()
+    cursor.execute(query, values)
     connection.commit()
 
 
