@@ -125,10 +125,10 @@ def command_report(user_id):
 def init_users_table():
     connection.cursor().execute('''
         CREATE TABLE IF NOT EXISTS Users (
-        id INTEGER PRIMARY KEY
-        telegram_id INTEGER
-        first_name TEXT DEFAULT NULL
-        last_name TEXT DEFAULT NULL
+        id INTEGER PRIMARY KEY,
+        telegram_id INTEGER,
+        first_name TEXT DEFAULT NULL,
+        last_name TEXT DEFAULT NULL,
         username TEXT DEFAULT NULL
         ''')
     connection.commit()
