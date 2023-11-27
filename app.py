@@ -53,6 +53,7 @@ def tg_init():
     user = message['from']
     # for future
     chat = message['chat']
+    parse_command(message, user['id'])
     return {
         "status": "ok"
     }
