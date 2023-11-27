@@ -81,16 +81,16 @@ def send_message(user_id, message):
 
 
 def store_user_if_needed(tg_user):
-    user = get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
-    if user is None:
+    users = get_user_by_telegram_id(telegram_id=tg_user['id'])
+    if len(users) < 1:
         set_user(
             telegram_id=tg_user['id'],
             first_name=tg_user['first_name'],
             last_name=tg_user['last_name'],
             username=tg_user['username']
         )
-        user = get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
-    return user
+        users = get_user_by_telegram_id(telegram_id=tg_user['id'])[0]
+    return users[0]
 
 
 def parse_command(command, user_id):
