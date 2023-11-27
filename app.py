@@ -44,7 +44,7 @@ def get_me():
 
 @app.route("/api/tg-webhook", methods=['POST'])
 def tg_init():
-    print(request.json)
+    print(request.form)
     message = request.form['message']
     user = message['from']
 
