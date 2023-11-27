@@ -59,7 +59,7 @@ def tg_init():
 
 def send_message(user_id, message):
     data = {
-        "chatId": user_id,
+        "chat_id": user_id,
         "text": message
     }
 
